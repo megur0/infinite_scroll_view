@@ -92,7 +92,7 @@ class _DummyPageState extends State<_DummyPage> {
         * データリソースがStreamの場合はアクション(loadMoreやrefresh)とは無関係のタイミングでデータ受信の際にerrorが発生する可能性がある。
         * 例
             * loadMoreのアクションを行った際、状態は「moreLoading」となる。
-            * データリソースがStreamの場合、（loadMoreのアクションが完了する前に）loadMoreとは無関係のエラーを受信し、、InfiniteScrollViewの親ウィジェットがリビルドされてerrorが渡される。
+            * データリソースがStreamの場合、（loadMoreのアクションが完了する前に）loadMoreとは無関係のエラーを受信し、InfiniteScrollViewの親ウィジェットがリビルドされてerrorが渡される。
             * この場合、InfiniteScrollViewは「moreLoading」->「moreLoadError」という状態遷移を行う。（moreLoadの結果としてのエラーとして扱われ、「loadError」にはならない。）
 * リトライ
     * 初期ロードエラーおよびloadMoreエラーの際は、loadErrorWidgetMakerやmoreLoadErrorWidgetMakerに渡されるコールバックを実行することでリトライを実行する。

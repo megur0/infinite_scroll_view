@@ -44,7 +44,7 @@ class InfiniteScrollView<T> extends StatefulWidget {
     required this.builder,
     required this.hasMore,
     required this.loadMore,
-    required this.retry,
+    this.retry,
     this.onRefresh,
     this.error,
     this.loadingWidgetMaker,
@@ -73,7 +73,7 @@ class InfiniteScrollView<T> extends StatefulWidget {
 
   final void Function() loadMore;
 
-  final void Function() retry;
+  final void Function()? retry;
 
   final Future<void> Function()? onRefresh;
 
@@ -89,7 +89,10 @@ class InfiniteScrollView<T> extends StatefulWidget {
   final Widget Function(BuildContext context, Object? error,
       LoadRetryCallback loadRetryCallback)? moreLoadErrorWidgetMaker;
 
-  final Widget Function(BuildContext context, Object? error,)? refreshErrorWidgetMaker;
+  final Widget Function(
+    BuildContext context,
+    Object? error,
+  )? refreshErrorWidgetMaker;
 
   final Widget Function(BuildContext context)? endOfDataWidgetMaker;
 
@@ -127,7 +130,10 @@ class _InfiniteScrollViewState<T> extends State<InfiniteScrollView<T>> {
 
   Widget _refreshErrorWidget(BuildContext context, Object? error) =>
       widget.refreshErrorWidgetMaker != null
-          ? widget.refreshErrorWidgetMaker!(context, error,)
+          ? widget.refreshErrorWidgetMaker!(
+              context,
+              error,
+            )
           : defaultRefreshErrorWidget(context);
 
   Widget _moreLoadingWidget(BuildContext context) =>
@@ -255,7 +261,7 @@ class _InfiniteScrollViewState<T> extends State<InfiniteScrollView<T>> {
   void _retry() {
     _statusUpdate(_LoadStatusUpdateType.retry);
     setState(() {});
-    widget.retry();
+    widget.retry?.call();
   }
 
   Future<void> _refresh() async {

@@ -20,58 +20,75 @@
     * loadMoreやretryはローディング表示を先行して行う必要があるため。
 ![](./doc/svg/infinite_scroll_design.drawio.svg)
 
-## Getting started
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
 ## Usage
-* See example/ for detail.
+* See examples/ for detail.
 ```dart
-class _DummyPageState extends State<_DummyPage> {
-  List<String> _items = [];
-  bool hasMore = true;
-  Object? error;
+import 'package:flutter/material.dart';
+import 'package:infinite_scroll_view/infinite_scroll_view.dart';
 
-  void loadMore() {
-    // Initial load and load more logic that updates items, hasMore, error
+main() => runApp(MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text("demo")),
+        body: const MyWidget(),
+      ),
+    ));
+
+class MyWidget extends StatefulWidget {
+  const MyWidget({super.key});
+
+  @override
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
+  List<int>? items;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
   }
 
-  void loadNew() {
-    // load new logic that updates items, hasMore, error
-  }
-
-  void retry() {
-    // retry load more 
+  Future<void> getData() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final offset = items?.length ?? 0;
+    items = [
+      ...(items ?? []),
+      ...(List.generate(100, (index) => offset + index))
+    ];
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: InfiniteScrollView<String>(
-        items: _items,
-        controller: ScrollController(),
-        // Default is InfiniteScrollType.toBottom which's scroll direction is to bottom and does not have RefreshIndocator.
-        infiniteScrollType: InfiniteScrollType.toBottomWithRefreshIndicator,
-        builder: (BuildContext context, String item, int index) {
-          return ListTile(
-            title: Text(item),
-          );
-        },
-        hasMore: hasMore,
-        loadMore: loadMore,
-        retry: retry,
-        onRefresh: loadNew,
-        error: error,
-        loadErrorWidgetMaker: (context, error, loadRetryCallback) {
-          return LoadErrorWidget(loadRetryCallback);// Some widgets if you want to use original widget when load error occured.
-        },
-        moreLoadErrorWidgetMaker: (context, error, loadRetryCallback) {
-          return LoadMoreErrorWidget(loadRetryCallback);// Some widgets if you want to use original widget when load more error occured.
-        },
-        refreshErrorWidgetMaker: (context, error) {
-          return RefreshErrorWidget();// Some widgets if you want to use original widget when refresh error occured.
-        },
+    return InfiniteScrollView(
+      // Default is InfiniteScrollType.toBottom which's scroll direction is to bottom and does not have RefreshIndocator.
+      // infiniteScrollType: InfiniteScrollType.toBottomWithRefreshIndicator,
+      // controller: ScrollController(),
+      items: items,
+      builder: (context, item, index) => Text(
+        "$item",
+        textAlign: TextAlign.center,
       ),
+      hasMore:  items == null || items!.length < 300,
+      // Initial load and load more logic that updates items, hasMore, error
+      loadMore: getData,
+      // retry: () {/* retry load more */},
+      // endOfDataWidgetMaker: (context) => const Text("end of data"),
+      //error: Object(),// if error is not null, the error widget will be displayed
+      // onRefresh: (){/* load new logic that updates items, hasMore, error */},
+      // loadErrorWidgetMaker: (context, error, loadRetryCallback) {
+      //   // Some widgets if you want to use original widget when load error occured.
+      //   return const Text("load error occured!");
+      // },
+      // moreLoadErrorWidgetMaker: (context, error, loadRetryCallback) {
+      //   // Some widgets if you want to use original widget when load more error occured.
+      //   return const Text("load more error occured!");
+      // },
+      // refreshErrorWidgetMaker: (context, error) {
+      //   // Some widgets if you want to use original widget when refresh error occured.
+      //   return const Text("refresh error occured!");
+      // },
     );
   }
 }
@@ -98,3 +115,7 @@ class _DummyPageState extends State<_DummyPage> {
     * 初期ロードエラーおよびloadMoreエラーの際は、loadErrorWidgetMakerやmoreLoadErrorWidgetMakerに渡されるコールバックを実行することでリトライを実行する。
 * デバッグ
     * debugPrintLoadStatusをtrueとすることで、状態遷移をするたびに標準出力へ出力をする。
+
+  
+## スクロールのテスト
+* see test/example_test.dart

@@ -35,7 +35,7 @@ enum _LoadStatus {
   moreLoadError;
 }
 
-class InfiniteScrollView<T> extends StatefulWidget {
+class InfiniteScrollView<T, E> extends StatefulWidget {
   const InfiniteScrollView({
     super.key,
     this.controller,
@@ -77,21 +77,21 @@ class InfiniteScrollView<T> extends StatefulWidget {
 
   final Future<void> Function()? onRefresh;
 
-  final Object? error;
+  final E? error;
 
   final Widget Function(BuildContext context)? loadingWidgetMaker;
 
-  final Widget Function(BuildContext context, Object? error,
+  final Widget Function(BuildContext context, E? error,
       LoadRetryCallback loadRetryCallback)? loadErrorWidgetMaker;
 
   final Widget Function(BuildContext context)? moreLoadingWidgetMaker;
 
-  final Widget Function(BuildContext context, Object? error,
+  final Widget Function(BuildContext context, E? error,
       LoadRetryCallback loadRetryCallback)? moreLoadErrorWidgetMaker;
 
   final Widget Function(
     BuildContext context,
-    Object? error,
+    E? error,
   )? refreshErrorWidgetMaker;
 
   final Widget Function(BuildContext context)? endOfDataWidgetMaker;
@@ -101,10 +101,10 @@ class InfiniteScrollView<T> extends StatefulWidget {
   final bool debugPrintLoadStatus;
 
   @override
-  State<InfiniteScrollView> createState() => _InfiniteScrollViewState<T>();
+  State<InfiniteScrollView> createState() => _InfiniteScrollViewState<T, E>();
 }
 
-class _InfiniteScrollViewState<T> extends State<InfiniteScrollView<T>> {
+class _InfiniteScrollViewState<T, E> extends State<InfiniteScrollView<T, E>> {
   late final ScrollController _controller =
       widget.controller ?? ScrollController();
 
@@ -118,17 +118,17 @@ class _InfiniteScrollViewState<T> extends State<InfiniteScrollView<T>> {
           ? widget.loadingWidgetMaker!(context)
           : defaultLoadingWidget();
 
-  Widget _loadErrorWidget(BuildContext context, Object? error) =>
+  Widget _loadErrorWidget(BuildContext context, E? error) =>
       widget.loadErrorWidgetMaker != null
           ? widget.loadErrorWidgetMaker!(context, error, _retry)
           : defaultLoadErrorWidget(_retry);
 
-  Widget _moreLoadErrorWidget(BuildContext context, Object? error) =>
+  Widget _moreLoadErrorWidget(BuildContext context, E? error) =>
       widget.moreLoadErrorWidgetMaker != null
           ? widget.moreLoadErrorWidgetMaker!(context, error, _retry)
           : defaultMoreLoadErrorWidget(context, _retry);
 
-  Widget _refreshErrorWidget(BuildContext context, Object? error) =>
+  Widget _refreshErrorWidget(BuildContext context, E? error) =>
       widget.refreshErrorWidgetMaker != null
           ? widget.refreshErrorWidgetMaker!(
               context,
@@ -160,7 +160,7 @@ class _InfiniteScrollViewState<T> extends State<InfiniteScrollView<T>> {
 
   @override
   void didUpdateWidget(Widget oldWidget) {
-    super.didUpdateWidget(oldWidget as InfiniteScrollView<T>);
+    super.didUpdateWidget(oldWidget as InfiniteScrollView<T, E>);
 
     // TODO: Prepare widget.itemComparator?
     final isItemChanged = oldWidget.items != widget.items ||

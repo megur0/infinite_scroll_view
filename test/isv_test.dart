@@ -154,7 +154,7 @@ class _DummyPageState extends State<_DummyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("test")),
-      body: InfiniteScrollView<_DummyItem>(
+      body: InfiniteScrollView<_DummyItem, Object>(
         items: _items,
         controller: ScrollController(),
         infiniteScrollType: InfiniteScrollType.toBottom,

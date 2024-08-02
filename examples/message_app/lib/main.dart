@@ -37,7 +37,7 @@ class _MessageAppState extends State<MessageApp> {
       InfiniteScrollType.toBottomWithRefreshIndicator;
   DateTime? latestMessageDatetime;
   List<MessageData> _items = <MessageData>[];
-  Object? _error;
+  Err? _error;
   int _page = 1;
   bool _needsAdditionalLoadAtFuture = true;
   late bool _hasMore = true;
@@ -58,7 +58,7 @@ class _MessageAppState extends State<MessageApp> {
       latestMessageDatetime = messages[0].createdAt;
       _items = [...messages, ..._items];
     } catch (err) {
-      _error = err;
+      _error = Err(message: err.toString());
     }
     setState(() {});
   }
@@ -76,7 +76,7 @@ class _MessageAppState extends State<MessageApp> {
       _items = [..._items, ...messages.messages];
     } catch (err) {
       //_page--;
-      _error = err;
+      _error = Err(message: err.toString());
     }
   }
 
@@ -101,7 +101,7 @@ class _MessageAppState extends State<MessageApp> {
             throw FlutterError('unexpected future state.');
           }
           return Stack(children: [
-            InfiniteScrollView<MessageData>(
+            InfiniteScrollView<MessageData, Err>(
               items: _items,
               builder: _builder,
               hasMore: _hasMore,
@@ -146,4 +146,10 @@ class _MessageAppState extends State<MessageApp> {
           ]);
         });
   }
+}
+
+class Err {
+  Err({required this.message, this.errorCode});
+  final String message;
+  final int? errorCode;
 }

@@ -39,6 +39,7 @@ class InfiniteScrollView<T, E> extends StatefulWidget {
   const InfiniteScrollView({
     super.key,
     this.controller,
+    this.scrollPhysics,
     this.infiniteScrollType = InfiniteScrollType.toBottom,
     required this.items,
     required this.builder,
@@ -63,6 +64,8 @@ class InfiniteScrollView<T, E> extends StatefulWidget {
 
   final ScrollController? controller;
 
+  final ScrollPhysics? scrollPhysics;
+
   final InfiniteScrollType infiniteScrollType;
 
   final List<T>? items;
@@ -81,13 +84,15 @@ class InfiniteScrollView<T, E> extends StatefulWidget {
 
   final Widget Function(BuildContext context)? loadingWidgetMaker;
 
-  final Widget Function(BuildContext context, E? error,
-      LoadRetryCallback loadRetryCallback)? loadErrorWidgetMaker;
+  final Widget Function(
+          BuildContext context, E? error, LoadRetryCallback loadRetryCallback)?
+      loadErrorWidgetMaker;
 
   final Widget Function(BuildContext context)? moreLoadingWidgetMaker;
 
-  final Widget Function(BuildContext context, E? error,
-      LoadRetryCallback loadRetryCallback)? moreLoadErrorWidgetMaker;
+  final Widget Function(
+          BuildContext context, E? error, LoadRetryCallback loadRetryCallback)?
+      moreLoadErrorWidgetMaker;
 
   final Widget Function(
     BuildContext context,
@@ -221,6 +226,7 @@ class _InfiniteScrollViewState<T, E> extends State<InfiniteScrollView<T, E>> {
     assert(widget.items != null, 'Items should not be null here.');
     final child = ListView.builder(
         controller: _controller,
+        physics: widget.scrollPhysics,
         reverse: _reverse,
         itemBuilder: (BuildContext context, int index) {
           switch ((index, widget.items!.length - index, startWidget)) {
